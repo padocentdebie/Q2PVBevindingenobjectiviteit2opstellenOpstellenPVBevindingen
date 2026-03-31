@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operationeel Systeem - PV Bevindingen Q2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, push, update, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRq1HFmhrpW_EMMZwpURrbTArz-L5iWT4",
+            databaseURL: "https://pvaangifteinleveren-77dbe-default-rtdb.europe-west1.firebasedatabase.app/",
+            projectId: "pvaangifteinleveren-77dbe"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const casusData = {
+            '1': { 
+                titel: 'CASUS: HUISELIJK GEWELD', 
+                img: 'verdriet.jpg', 
+                melding: "OC MELDING: 31-03-2026. Langestraat 44. Slachtoffer: Elif Terzi (geb. 19-08-1998). Verdachte: Murat Terzi (geb. 02-01-1995). Ter plaatse: Elif huilt onbeheerst, snikkende ademhaling. Letsel: rode gezwollen vlek op linkerwang, kras onder rechteroog. Ontkent mishandeling.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nWAARNEMINGEN:\n- \n- \n\nVERKLARINGEN:\n- " 
+            },
+            '2': { 
+                titel: 'CASUS: VERMISSING KIND', 
+                img: 'paniek.jpg', 
+                melding: "OC MELDING: 31-03-2026. Liam de Vries (4jr, geb. 12-05-2021) vermist vanaf speeltuin. Melder: Peter van der Laan (geb. 1975, beveiliger). LET OP: Melder ambtshalve bekend. Kenmerken: Handen in het haar, paniek, spreekt met luide stem.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nAMBTSHALVE HERKENNING:\n- \n\nSIGNALEMENT LIAM DE VRIES:\n- " 
+            },
+            '3': { 
+                titel: 'CASUS: OVERLAST (MIDDELEN)', 
+                img: 'drugs.jpg', 
+                melding: "OC MELDING: 31-03-2026. Stationsplein. Verdachte: Kevin Schut (geb. 22-11-2002). Kenmerken: Extreem grote pupillen, kaakklem, zweet op voorhoofd, ontbloot bovenlichaam, zwarte trainingsbroek.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nOBJECTIEVE KENMERKEN VERDACHTE:\n- \n- " 
+            },
+            '4': { 
+                titel: 'CASUS: RIJDEN ONDER INVLOED', 
+                img: 'alcohol.jpg', 
+                melding: "OC MELDING: 31-03-2026. A28 HM 14.2. Verdachte: Johannes Berends (geb. 14-05-1985). Kenmerken: Bloeddoorlopen/glazige ogen, hangende oogleden, spreekt met dubbele tong, sterke alcohollucht.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nINDICATOREN INVLOED:\n- \n- " 
+            }
+        };
+
+        window.login = () => {
+            const naam = document.getElementById('naam').value.trim();
+            const klas = document.getElementById('klas-select').value;
+            if(!naam || !klas) return alert("Identificatie onvolledig.");
+            window.voornaam = naam;
+            window.klas = klas;
+            const ids = Object.keys(casusData);
+            window.activeCasus = ids[Math.floor(Math.random() * ids.length)];
+            document.getElementById('auth-scherm').style.display = 'none';
+            document.getElementById('hoofd-scherm').classList.remove('hidden');
+            document.getElementById('display-info').innerText = `KLAS: ${window.klas} | AGENT: ${window.voornaam}`;
+            loadCasus();
+            initFeed();
+        };
+
+        function loadCasus() {
+            const c = casusData[window.activeCasus];
+            document.getElementById('oc-text').innerText = c.melding;
+            document.getElementById('casus-img').src = c.img;
+            document.getElementById('pv-input').placeholder = c.placeholder;
+        }
+
+        window.verstuurPV = () => {
+            const tekst = document.getElementById('pv-input').value.trim();
+            if(tekst.length < 30) return alert("Rapportage is te summier.");
+            push(ref(db, `btv_2026_q2/klassen/${window.klas}/live_feed`), {
+                naam: window.voornaam,
+                tekst: tekst,
+                casusId: window.activeCasus,
+                tijd: Date.now(),
+                feedback: { obj:0, astma:0, feiten:0, rvw:0, ovt:0, decor:0 }
+            });
+            document.getElementById('input-side').innerHTML = `
+                <div class="p-10 border-4 border-blue-900 bg-white text-blue-900 font-bold text-center">
+                    BERICHT VERZONDEN NAAR FEED: ${window.klas}<br><br>
+                    <span class="text-xs font-normal">Start nu met het beoordelen van collega-rapportages.</span>
+                </div>`;
+        };
+
+        window.giveFeedback = (postId, type) => {
+            update(ref(db, `btv_2026_q2/klassen/${window.klas}/live_feed/${postId}/feedback`), { [type]: increment(1) });
+        };
+
+        function initFeed() {
+            onValue(ref(db, `btv_2026_q2/klassen/${window.klas}/live_feed`), (snap) => {
+                const container = document.getElementById('live-feed');
+                container.innerHTML = "";
+                const data = snap.val();
+                if(!data) return container.innerHTML = "<p class='text-center text-[10px] text-slate-400 mt-10 uppercase'>Monitor actief - wacht op invoer...</p>";
+
+                Object.keys(data).reverse().forEach(key => {
+                    const post = data[key];
+                    const fb = post.feedback || {};
+                    container.innerHTML += `
+                        <div class="bg-white border border-slate-300 p-5 mb-6 shadow-sm">
+                            <div class="flex justify-between text-[9px] font-black text-slate-400 border-b pb-2 mb-4 uppercase tracking-tighter">
+                                <span>Agent: ${post.naam}</span>
+                                <span>${casusData[post.casusId].titel}</span>
+                            </div>
+                            <div class="text-[11px] font-mono leading-relaxed whitespace-pre-wrap text-slate-900 mb-6 bg-slate-50 p-3 border border-slate-100 italic">"${post.tekst}"</div>
+                            <div class="grid grid-cols-3 gap-1">
+                                <button onclick="giveFeedback('${key}', 'obj')" class="border border-slate-200 py-2 text-[8px] font-bold hover:bg-blue-900 hover:text-white transition-colors uppercase">Objectief (${fb.obj || 0})</button>
+                                <button onclick="giveFeedback('${key}', 'astma')" class="border border-slate-200 py-2 text-[8px] font-bold hover:bg-blue-900 hover:text-white transition-colors uppercase">ASTMA (${fb.astma || 0})</button>
+                                <button onclick="giveFeedback('${key}', 'feiten')" class="border border-slate-200 py-2 text-[8px] font-bold hover:bg-blue-900 hover:text-white transition-colors uppercase">Feiten (${fb.feiten || 0})</button>
+                                <button onclick="giveFeedback('${key}', 'rvw')" class="border border-slate-200 py-2 text-[8px] font-bold hover:bg-blue-900 hover:text-white transition-colors uppercase">Wetenschap (${fb.rvw || 0})</button>
+                                <button onclick="giveFeedback('${key}', 'ovt')" class="border border-slate-200 py-2 text-[8px] font-bold hover:bg-blue-900 hover:text-white transition-colors uppercase">OVT (${fb.ovt || 0})</button>
+                                <button onclick="giveFeedback('${key}', 'decor')" class="border border-slate-200 py-2 text-[8px] font-bold hover:bg-blue-900 hover:text-white transition-colors uppercase">Decor (${fb.decor || 0})</button>
+                            </div>
+                        </div>`;
+                });
+            });
+        }
+    </script>
+</head>
+<body class="bg-slate-100 text-slate-900 font-sans">
+
+    <div id="auth-scherm" class="fixed inset-0 bg-[#002d5e] z-50 flex items-center justify-center p-4">
+        <div class="bg-white p-8 w-full max-w-sm border-t-8 border-yellow-600 shadow-2xl">
+            <h1 class="font-black text-2xl text-blue-900 mb-2 uppercase tracking-tighter">BTV SYSTEEM</h1>
+            <p class="text-[9px] font-bold text-slate-400 mb-8 uppercase tracking-widest">Identificatie vereist</p>
+            <input type="text" id="naam" placeholder="ACHTERNAAM" class="w-full border border-slate-300 p-4 mb-4 font-bold bg-slate-50 uppercase text-xs focus:ring-1 focus:ring-blue-900 outline-none">
+            <select id="klas-select" class="w-full border border-slate-300 p-4 mb-8 font-bold bg-slate-50 uppercase text-xs focus:ring-1 focus:ring-blue-900 outline-none">
+                <option value="">SELECTEER NATO-KLAS</option>
+                <option value="ALFA">ALFA</option><option value="BRAVO">BRAVO</option>
+                <option value="CHARLIE">CHARLIE</option><option value="DELTA">DELTA</option>
+                <option value="ECHO">ECHO</option><option value="FOXTROT">FOXTROT</option>
+                <option value="GOLF">GOLF</option><option value="HOTEL">HOTEL</option>
+                <option value="JULIETT">JULIETT</option><option value="KILO">KILO</option>
+                <option value="LIMA">LIMA</option><option value="MIKE">MIKE</option>
+            </select>
+            <button onclick="login()" class="w-full bg-[#002d5e] text-white p-4 font-bold uppercase text-xs tracking-widest shadow-lg hover:bg-blue-800 transition-all">Toegang verlenen</button>
+        </div>
+    </div>
+
+    <div id="hoofd-scherm" class="hidden max-w-7xl mx-auto p-6">
+        <header class="flex justify-between items-center mb-8 border-b-2 border-blue-900 pb-3">
+            <div id="display-info" class="text-blue-900 font-black text-[10px] tracking-widest uppercase"></div>
+            <div class="text-[9px] text-slate-500 font-bold tracking-widest uppercase">31-03-2026 | PV MONITOR</div>
+        </header>
+
+        <div class="grid lg:grid-cols-2 gap-10">
+            <section id="input-side">
+                <div class="bg-white border border-slate-300 p-6 shadow-sm">
+                    <h2 class="text-[10px] font-black text-blue-900 mb-4 border-b border-slate-100 pb-2 uppercase tracking-widest italic">Melding Operationeel Centrum</h2>
+                    <div id="oc-text" class="bg-slate-50 p-5 font-mono text-[11px] text-slate-700 mb-6 border-l-4 border-blue-900 leading-relaxed italic"></div>
+                    
+                    <div class="mb-6 bg-slate-200 border border-slate-300">
+                        <img id="casus-img" class="w-full aspect-video object-cover filter contrast-125 grayscale-[20%]">
+                    </div>
+                    
+                    <textarea id="pv-input" class="w-full h-80 border border-slate-200 p-5 font-mono text-[12px] bg-slate-50 focus:bg-white outline-none focus:ring-1 focus:ring-blue-900 mb-4 transition-all" spellcheck="false"></textarea>
+                    
+                    <button onclick="verstuurPV()" class="w-full bg-[#002d5e] text-white py-5 font-bold uppercase text-[10px] tracking-[0.2em] shadow-md hover:bg-blue-800 transition-all">Verzend Rapportage</button>
+                </div>
+            </section>
+
+            <section class="h-[850px] overflow-y-auto bg-slate-200/40 p-6 border border-slate-200 shadow-inner">
+                <h3 class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8 text-center">Live Feedback Monitoring</h3>
+                <div id="live-feed"></div>
+            </section>
+        </div>
+    </div>
+
+</body>
+</html>
