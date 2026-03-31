@@ -23,31 +23,35 @@
             '1': { 
                 titel: 'CASUS: HUISELIJK GEWELD', 
                 img: 'verdriet.jpg', 
-                melding: "OC MELDING: 31-03-2026. Langestraat 44. Slachtoffer: Elif Terzi (geb. 19-08-1998). Verdachte: Murat Terzi (geb. 02-01-1995). Ter plaatse: Elif huilt onbeheerst, snikkende ademhaling. Letsel: rode gezwollen vlek op linkerwang, kras onder rechteroog. Ontkent mishandeling.",
-                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nWAARNEMINGEN:\n- \n- \n\nVERKLARINGEN:\n- " 
+                melding: "OC MELDING: Langestraat 44. Slachtoffer: Elif Terzi. Verdachte: Murat Terzi. Buren melden hard geschreeuw en klappen.",
+                feiten: "TER PLAATSE:\n- HOREN: Extreem hard, vervormd geluid uit de TV en een geluidstoren. Communicatie alleen schreeuwend mogelijk.\n- ZIEN: Elif Terzi huilt onbeheerst. Rode gezwollen vlek (2 euro munt) op linkerwang, verse kras (3cm) onder rechteroog.\n- DECOR: Woonkamer nagenoeg kaal. Houten stoel ligt omgevallen. Salontafel in scherven. Verse rode spatten (bloed) op witte muur.\n- GEDRAG: Murat staat met gebalde vuisten in de deuropening. Rook naar schraal bier.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nWAARNEMINGEN (INCL. DECOR & GELUID):\n- \n\nVERKLARINGEN:\n- " 
             },
             '2': { 
                 titel: 'CASUS: VERMISSING KIND', 
                 img: 'paniek.jpg', 
-                melding: "OC MELDING: 31-03-2026. Liam de Vries (4jr, geb. 12-05-2021) vermist vanaf speeltuin. Melder: Peter van der Laan (geb. 1975, beveiliger). LET OP: Melder ambtshalve bekend. Kenmerken: Handen in het haar, paniek, spreekt met luide stem.",
-                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nAMBTSHALVE HERKENNING:\n- \n\nSIGNALEMENT LIAM DE VRIES:\n- " 
+                melding: "OC MELDING: Liam de Vries (4jr) vermist vanaf speeltuin De Wip. Melder: Peter van der Laan (beveiliger).",
+                feiten: "TER PLAATSE:\n- OMGEVING: Speeltuin omheind met laag hekje (60cm). Op 15 meter afstand ligt een open vijver met steile oever. Bosjesrand direct grenzend aan terrein.\n- CONDITIES: Laagstaande zon zorgt voor sterke schittering op metalen toestellen. Druk bezet (ca. 20 personen).\n- GEDRAG: Melder rent paniekerig heen en weer, handen in het haar. Roept met overslaande stem 'Liam'.\n- VERKLARING: 'Keek één seconde op mijn telefoon en hij was weg'.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nSITUATIE SCHETS & OMGEVINGSRISICO'S:\n- \n\nSIGNALEMENT & GEDRAG MELDER:\n- " 
             },
             '3': { 
                 titel: 'CASUS: OVERLAST (MIDDELEN)', 
                 img: 'drugs.jpg', 
-                melding: "OC MELDING: 31-03-2026. Stationsplein. Verdachte: Kevin Schut (geb. 22-11-2002). Kenmerken: Extreem grote pupillen, kaakklem, zweet op voorhoofd, ontbloot bovenlichaam, zwarte trainingsbroek.",
-                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nOBJECTIEVE KENMERKEN VERDACHTE:\n- \n- " 
+                melding: "OC MELDING: Stationsplein. Verdachte: Kevin Schut. Melding van verward gedrag en intimidatie.",
+                feiten: "TER PLAATSE:\n- UITERLIJK: Ontbloot bovenlichaam, zwarte trainingsbroek. Zweetdruppels op voorhoofd bij 10 graden.\n- INDICATOREN: Extreem grote pupillen (geen reactie op licht). Zware kaakklem (gespannen kauwspieren).\n- MOTORIEK: Ongecontroleerde, schokkerige bewegingen met armen. Probeert voorbijgangers fysiek te blokkeren.\n- GEDRAG: Praat snel en onsamenhangend tegen objecten die er niet zijn.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nOBJECTIEVE KENMERKEN & INDICATOREN:\n- \n- " 
             },
             '4': { 
-                titel: 'CASUS: RIJDEN ONDER INVLOED', 
+                titel: 'CASUS: AANRIJDING & ALCOHOL', 
                 img: 'alcohol.jpg', 
-                melding: "OC MELDING: 31-03-2026. A28 HM 14.2. Verdachte: Johannes Berends (geb. 14-05-1985). Kenmerken: Bloeddoorlopen/glazige ogen, hangende oogleden, spreekt met dubbele tong, sterke alcohollucht.",
-                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nINDICATOREN INVLOED:\n- \n- " 
+                melding: "OC MELDING: A28 HM 14.2. Aanrijding met letsel. Verdachte: Johannes Berends.",
+                feiten: "TER PLAATSE:\n- HET FEIT: Auto diagonaal tegen vangrail, voorzijde ingedrukt. Remspoor van slechts 2 meter (te laat gereageerd).\n- VERWIJTBAARHEID: Geopend blik bier in bekerhouder (voelt nog koud aan). Bestuurder begrijpt werking gordelgesp niet.\n- INDICATOREN: Bloeddoorlopen/glazige ogen, hangende oogleden. Spreekt met dubbele tong.\n- ZINTUIGLIJK: Sterke, ambtshalve bekende alcohollucht uit de mond.",
+                placeholder: "PROCES-VERBAAL VAN BEVINDINGEN\n\nVERWIJTBAARHEID & ONGEVALSCONTEXT:\n- \n\nINDICATOREN INVLOED (ASTMA):\n- " 
             }
         };
 
         window.login = () => {
-            const naam = document.getElementById('naam').value.trim();
+            const naam = document.getElementById('naam').value.trim().toUpperCase();
             const klas = document.getElementById('klas-select').value;
             if(!naam || !klas) return alert("Identificatie onvolledig.");
             window.voornaam = naam;
@@ -63,7 +67,7 @@
 
         function loadCasus() {
             const c = casusData[window.activeCasus];
-            document.getElementById('oc-text').innerText = c.melding;
+            document.getElementById('oc-text').innerHTML = `<strong>MELDING:</strong> ${c.melding}<br><br><strong>FEITEN & OMSTANDIGHEDEN:</strong><br><pre class="whitespace-pre-wrap font-mono mt-2">${c.feiten}</pre>`;
             document.getElementById('casus-img').src = c.img;
             document.getElementById('pv-input').placeholder = c.placeholder;
         }
@@ -94,7 +98,7 @@
                 const container = document.getElementById('live-feed');
                 container.innerHTML = "";
                 const data = snap.val();
-                if(!data) return container.innerHTML = "<p class='text-center text-[10px] text-slate-400 mt-10 uppercase'>Monitor actief - wacht op invoer...</p>";
+                if(!data) return container.innerHTML = "<p class='text-center text-[10px] text-slate-400 mt-10 uppercase text-blue-900'>Monitor actief - wacht op invoer...</p>";
 
                 Object.keys(data).reverse().forEach(key => {
                     const post = data[key];
@@ -150,7 +154,7 @@
             <section id="input-side">
                 <div class="bg-white border border-slate-300 p-6 shadow-sm">
                     <h2 class="text-[10px] font-black text-blue-900 mb-4 border-b border-slate-100 pb-2 uppercase tracking-widest italic">Melding Operationeel Centrum</h2>
-                    <div id="oc-text" class="bg-slate-50 p-5 font-mono text-[11px] text-slate-700 mb-6 border-l-4 border-blue-900 leading-relaxed italic"></div>
+                    <div id="oc-text" class="bg-slate-50 p-5 font-mono text-[11px] text-slate-700 mb-6 border-l-4 border-blue-900 leading-relaxed"></div>
                     
                     <div class="mb-6 bg-slate-200 border border-slate-300">
                         <img id="casus-img" class="w-full aspect-video object-cover filter contrast-125 grayscale-[20%]">
